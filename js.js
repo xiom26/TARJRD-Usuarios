@@ -1,6 +1,9 @@
 (function(){
   const $ = (sel, ctx=document) => ctx.querySelector(sel);
-  const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+
+  if(!document.getElementById('guc-table')){
+    return;
+  }
 
   // ---------- Crear ----------
   function openModal(){ $('#guc-mask').style.display='flex'; $('#guc-expediente').focus(); }
@@ -9,15 +12,15 @@
   function rowHTML(r){
     return `
       <tr data-id="${r.id}">
-        <td class="guc-td-username"><a href="#" title="Usuario">${r.username}</a></td>
-        <td class="guc-td-password"><span class="guc-badge-green">${r.password}</span></td>
+        <td class="guc-td-username">${r.username}</td>
+        <td class="guc-td-password"><span class="guc-badge" aria-label="Contraseña generada"><span>🔐</span><span>${r.password}</span></span></td>
         <td class="guc-td-entity">${r.entity ? r.entity : '-'}</td>
         <td class="guc-td-expediente">${r.expediente}</td>
         <td class="guc-td-created">${r.created_at}</td>
         <td class="guc-actions">
-          <button class="guc-icon guc-view" data-act="view" title="Ver">👁️</button>
-          <button class="guc-icon guc-edit" data-act="edit" title="Editar">✏️</button>
-          <button class="guc-icon guc-del" data-act="delete" title="Eliminar">🗑️</button>
+          <button class="guc-icon" data-act="view" title="Ver detalles">👁️</button>
+          <button class="guc-icon" data-act="edit" title="Editar">✏️</button>
+          <button class="guc-icon" data-act="delete" title="Eliminar">🗑️</button>
         </td>
       </tr>
     `;
@@ -32,6 +35,14 @@
     const j = await res.json();
     if(!j.success){ alert(GUC.capErr); return; }
     const tbody = $('#guc-tbody');
+    const empty = $('#guc-empty');
+    if(!j.data.rows.length){
+      tbody.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+
+    empty.style.display = 'none';
     tbody.innerHTML = j.data.rows.map(rowHTML).join('');
   }
 
@@ -50,6 +61,7 @@
 
     if(!j.success){ alert(j.data?.msg || 'Error'); return; }
     const tbody = $('#guc-tbody');
+    $('#guc-empty').style.display = 'none';
     tbody.insertAdjacentHTML('afterbegin', rowHTML(j.data.row));
     closeModal();
   }
@@ -64,6 +76,10 @@
     const j = await res.json();
     if(!j.success){ alert(j.data?.msg || 'No se pudo eliminar'); return; }
     tr.remove();
+    const tbody = $('#guc-tbody');
+    if(!tbody.children.length){
+      $('#guc-empty').style.display = 'block';
+    }
   }
 
   // ---------- Editar ----------
@@ -74,7 +90,7 @@
       edit.tr = tr;
 
       const username = tr.querySelector('.guc-td-username').innerText.trim();
-      const password = tr.querySelector('.guc-td-password').innerText.trim();
+      const password = tr.querySelector('.guc-td-password span:last-child').innerText.trim();
       const entity   = tr.querySelector('.guc-td-entity').innerText.trim();
       const expediente = tr.querySelector('.guc-td-expediente').innerText.trim();
 
@@ -161,7 +177,7 @@
 
       if(act === 'view'){
         const u = tr.querySelector('.guc-td-username').innerText.trim();
-        const p = tr.querySelector('.guc-td-password').innerText.trim();
+        const p = tr.querySelector('.guc-td-password span:last-child').innerText.trim();
         const en = tr.querySelector('.guc-td-entity').innerText.trim();
         const ex = tr.querySelector('.guc-td-expediente').innerText.trim();
         alert(`Usuario: ${u}\nContraseña: ${p}\nEntidad: ${en}\nExpediente: ${ex}`);
