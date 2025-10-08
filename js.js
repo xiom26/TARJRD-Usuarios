@@ -1,9 +1,13 @@
 (function(){
-  const $ = (sel, ctx=document) => ctx.querySelector(sel);
+  const root = document.getElementById('guc-usuarios-casos');
+  if(!root) return;
 
-  if(!document.getElementById('guc-table')){
-    return;
-  }
+  const $  = (sel, ctx=root) => ctx.querySelector(sel);
+  const $$ = (sel, ctx=root) => Array.from(ctx.querySelectorAll(sel));
+
+  const ajax   = root.dataset.ajax;
+  const nonce  = root.dataset.nonce;
+  const capErr = root.dataset.caperr || 'No autorizado';
 
   // ---------- Crear ----------
   function openModal(){ $('#guc-mask').hidden = false; $('#guc-expediente').focus(); }
@@ -29,13 +33,13 @@
   }
 
   async function fetchList(){
-    const res = await fetch(GUC.ajax, {
+    const res = await fetch(ajax, {
       method:'POST',
       headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      body: new URLSearchParams({ action:'guc_list', nonce:GUC.nonce })
+      body: new URLSearchParams({ action:'guc_list', nonce:nonce })
     });
     const j = await res.json();
-    if(!j.success){ alert(GUC.capErr); return; }
+    if(!j.success){ alert(capErr); return; }
     const tbody = $('#guc-tbody');
     const empty = $('#guc-empty');
     if(!j.data.rows.length){
@@ -53,10 +57,10 @@
     if (!expediente){ alert('Ingresa el Nro de Expediente'); return; }
     $('#guc-create').disabled = true;
 
-    const res = await fetch(GUC.ajax, {
+    const res = await fetch(ajax, {
       method:'POST',
       headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      body: new URLSearchParams({ action:'guc_create', nonce:GUC.nonce, expediente })
+      body: new URLSearchParams({ action:'guc_create', nonce:nonce, expediente })
     });
     const j = await res.json();
     $('#guc-create').disabled = false;
@@ -70,10 +74,10 @@
 
   async function deleteRow(id, tr){
     if(!confirm('¿Eliminar este usuario?')) return;
-    const res = await fetch(GUC.ajax, {
+    const res = await fetch(ajax, {
       method:'POST',
       headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      body: new URLSearchParams({ action:'guc_delete', nonce:GUC.nonce, id })
+      body: new URLSearchParams({ action:'guc_delete', nonce:nonce, id })
     });
     const j = await res.json();
     if(!j.success){ alert(j.data?.msg || 'No se pudo eliminar'); return; }
@@ -132,12 +136,12 @@
       const expediente = $('#guc-edit-expediente').value.trim();
       $('#guc-edit-save').disabled = true;
 
-      const res = await fetch(GUC.ajax, {
+      const res = await fetch(ajax, {
         method:'POST',
         headers:{'Content-Type':'application/x-www-form-urlencoded'},
         body: new URLSearchParams({
           action:'guc_update',
-          nonce:GUC.nonce,
+          nonce:nonce,
           id: edit.id,
           entity,
           expediente
@@ -157,7 +161,7 @@
   };
 
   // ---------- Eventos ----------
-  document.addEventListener('click', (e)=>{
+  root.addEventListener('click', (e)=>{
     if(e.target.id === 'guc-open-modal'){ openModal(); }
     if(e.target.id === 'guc-close' || e.target.id === 'guc-cancel'){ closeModal(); }
     if(e.target.id === 'guc-create'){ createUser(); }
@@ -172,8 +176,8 @@
 
     // acciones por fila
     const actBtn = e.target.closest('.guc-actions .guc-icon');
-    if(actBtn){
-      const tr = e.target.closest('tr');
+    if(actBtn && root.contains(actBtn)){
+      const tr = actBtn.closest('tr');
       const id = parseInt(tr.dataset.id,10);
       const act = actBtn.dataset.act;
 
@@ -194,12 +198,16 @@
   });
 
   // marca sucio cuando cambien los inputs del modal editar
-  ['guc-edit-entity','guc-edit-expediente'].forEach(id=>{
-    document.addEventListener('input', (e)=>{
-      if(e.target.id === id){ edit.dirty = true; }
-    });
+  root.addEventListener('input', (e)=>{
+    if(e.target.id === 'guc-edit-entity' || e.target.id === 'guc-edit-expediente'){
+      edit.dirty = true;
+    }
   });
 
   // inicia
-  document.addEventListener('DOMContentLoaded', fetchList);
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', fetchList);
+  }else{
+    fetchList();
+  }
 })();

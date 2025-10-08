@@ -121,11 +121,6 @@ class GUC_Plugin {
             wp_add_inline_style('guc-css', $css);
 
             wp_enqueue_script('guc-js', plugin_dir_url(__FILE__) . 'js.js', [], '1.3.0', true);
-            wp_localize_script('guc-js', 'GUC', [
-                'ajax'   => admin_url('admin-ajax.php'),
-                'nonce'  => wp_create_nonce('guc_nonce'),
-                'capErr' => __('No autorizado', 'guc'),
-            ]);
         }
     }
 
@@ -133,8 +128,12 @@ class GUC_Plugin {
     public function shortcode($atts) {
         $this->maybe_create_table();
 
+        $ajax    = admin_url('admin-ajax.php');
+        $nonce   = wp_create_nonce('guc_nonce');
+        $cap_err = __('No autorizado', 'guc');
+
         ob_start(); ?>
-        <div class="guc-wrap">
+        <div id="guc-usuarios-casos" class="guc-wrap" data-ajax="<?php echo esc_url($ajax); ?>" data-nonce="<?php echo esc_attr($nonce); ?>" data-caperr="<?php echo esc_attr($cap_err); ?>">
             <div class="guc-header">
                 <h2 class="guc-title">Gestión de Usuarios</h2>
                 <button class="guc-btn guc-btn-primary" id="guc-open-modal" type="button">Crear usuario</button>
@@ -155,57 +154,57 @@ class GUC_Plugin {
                 </table>
                 <div class="guc-empty" id="guc-empty" hidden>No hay usuarios registrados.</div>
             </div>
-        </div>
 
-        <!-- Modal: Crear -->
-        <div class="guc-modal-mask" id="guc-mask" hidden>
-            <div class="guc-modal" role="dialog" aria-modal="true" aria-labelledby="guc-modal-title">
-                <div class="guc-modal-header">
-                    <h3 class="guc-modal-title" id="guc-modal-title">Crear nuevo usuario</h3>
-                    <button class="guc-close" id="guc-close" type="button" aria-label="Cerrar">×</button>
-                </div>
-                <div class="guc-modal-body">
-                    <div class="guc-field">
-                        <label class="guc-label" for="guc-expediente">Nro Expediente</label>
-                        <input type="text" class="guc-input" id="guc-expediente" placeholder="Ej.: TAR-2033-GL">
-                        <div class="guc-helper">Se guardará exactamente como lo ingreses.</div>
+            <!-- Modal: Crear -->
+            <div class="guc-modal-mask" id="guc-mask" hidden>
+                <div class="guc-modal" role="dialog" aria-modal="true" aria-labelledby="guc-modal-title">
+                    <div class="guc-modal-header">
+                        <h3 class="guc-modal-title" id="guc-modal-title">Crear nuevo usuario</h3>
+                        <button class="guc-close" id="guc-close" type="button" aria-label="Cerrar">×</button>
                     </div>
-                </div>
-                <div class="guc-modal-footer">
-                    <button class="guc-btn guc-btn-outline" id="guc-cancel" type="button">Cancelar</button>
-                    <button class="guc-btn guc-btn-primary" id="guc-create" type="button">Crear</button>
+                    <div class="guc-modal-body">
+                        <div class="guc-field">
+                            <label class="guc-label" for="guc-expediente">Nro Expediente</label>
+                            <input type="text" class="guc-input" id="guc-expediente" placeholder="Ej.: TAR-2033-GL">
+                            <div class="guc-helper">Se guardará exactamente como lo ingreses.</div>
+                        </div>
+                    </div>
+                    <div class="guc-modal-footer">
+                        <button class="guc-btn guc-btn-outline" id="guc-cancel" type="button">Cancelar</button>
+                        <button class="guc-btn guc-btn-primary" id="guc-create" type="button">Crear</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Modal: Editar -->
-        <div class="guc-modal-mask" id="guc-edit-mask" hidden>
-            <div class="guc-modal" role="dialog" aria-modal="true" aria-labelledby="guc-edit-title">
-                <div class="guc-modal-header">
-                    <h3 class="guc-modal-title" id="guc-edit-title">Editar usuario</h3>
-                    <button class="guc-close" id="guc-edit-close" type="button" aria-label="Cerrar">×</button>
-                </div>
-                <div class="guc-modal-body">
-                    <div class="guc-field">
-                        <label class="guc-label" for="guc-edit-username">Usuario</label>
-                        <input type="text" class="guc-input" id="guc-edit-username" disabled>
+            <!-- Modal: Editar -->
+            <div class="guc-modal-mask" id="guc-edit-mask" hidden>
+                <div class="guc-modal" role="dialog" aria-modal="true" aria-labelledby="guc-edit-title">
+                    <div class="guc-modal-header">
+                        <h3 class="guc-modal-title" id="guc-edit-title">Editar usuario</h3>
+                        <button class="guc-close" id="guc-edit-close" type="button" aria-label="Cerrar">×</button>
                     </div>
-                    <div class="guc-field">
-                        <label class="guc-label" for="guc-edit-password">Contraseña</label>
-                        <input type="text" class="guc-input" id="guc-edit-password" disabled>
+                    <div class="guc-modal-body">
+                        <div class="guc-field">
+                            <label class="guc-label" for="guc-edit-username">Usuario</label>
+                            <input type="text" class="guc-input" id="guc-edit-username" disabled>
+                        </div>
+                        <div class="guc-field">
+                            <label class="guc-label" for="guc-edit-password">Contraseña</label>
+                            <input type="text" class="guc-input" id="guc-edit-password" disabled>
+                        </div>
+                        <div class="guc-field">
+                            <label class="guc-label" for="guc-edit-entity">Entidad</label>
+                            <input type="text" class="guc-input" id="guc-edit-entity" placeholder="Ej.: Policía / TAR">
+                        </div>
+                        <div class="guc-field">
+                            <label class="guc-label" for="guc-edit-expediente">Expediente</label>
+                            <input type="text" class="guc-input" id="guc-edit-expediente" placeholder="Ej.: TAR-2033-GL">
+                        </div>
                     </div>
-                    <div class="guc-field">
-                        <label class="guc-label" for="guc-edit-entity">Entidad</label>
-                        <input type="text" class="guc-input" id="guc-edit-entity" placeholder="Ej.: Policía / TAR">
+                    <div class="guc-modal-footer">
+                        <button class="guc-btn guc-btn-outline" id="guc-edit-cancel" type="button">Cancelar</button>
+                        <button class="guc-btn guc-btn-primary" id="guc-edit-save" type="button">Guardar</button>
                     </div>
-                    <div class="guc-field">
-                        <label class="guc-label" for="guc-edit-expediente">Expediente</label>
-                        <input type="text" class="guc-input" id="guc-edit-expediente" placeholder="Ej.: TAR-2033-GL">
-                    </div>
-                </div>
-                <div class="guc-modal-footer">
-                    <button class="guc-btn guc-btn-outline" id="guc-edit-cancel" type="button">Cancelar</button>
-                    <button class="guc-btn guc-btn-primary" id="guc-edit-save" type="button">Guardar</button>
                 </div>
             </div>
         </div>
