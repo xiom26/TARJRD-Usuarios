@@ -79,51 +79,42 @@ class GUC_Plugin {
             wp_enqueue_style('guc-css');
 
             $css = <<<CSS
-            .guc-app{font-family:"Inter", "Roboto", Arial, sans-serif;color:#3f2d20;background:#f8f4ee;padding:24px;border-radius:22px;box-shadow:0 18px 40px rgba(63,45,32,0.08);border:1px solid #efe4d8}
-            .guc-app *{box-sizing:border-box}
-            .guc-nav{display:flex;gap:8px;margin-bottom:24px;background:#f1e6d8;padding:8px;border-radius:999px;justify-content:flex-start;align-items:center}
-            .guc-nav__item{border:0;background:transparent;color:#866c4f;font-weight:600;padding:10px 20px;border-radius:999px;cursor:default;opacity:.7;transition:all .2s ease}
-            .guc-nav__item--active{background:#fff;border:1px solid #e7d5bf;box-shadow:0 6px 12px rgba(63,45,32,0.12);color:#3f2d20;opacity:1}
-            .guc-section{margin-bottom:28px}
-            .guc-section__header{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:16px}
-            .guc-section__title{margin:0;font-weight:800;font-size:22px;color:#3f2d20}
-            .guc-section__subtitle{margin:4px 0 0;color:#90765a;font-size:14px;font-weight:500}
-            .guc-pill{border:0;border-radius:999px;padding:10px 20px;cursor:pointer;background:linear-gradient(90deg,#8c7457,#bca07b);color:#fff;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 12px 20px rgba(140,116,87,0.2)}
-            .guc-pill:disabled{opacity:.6;cursor:not-allowed}
-            .guc-card{background:#fff;border-radius:18px;border:1px solid #f0e6db;box-shadow:0 12px 30px rgba(63,45,32,0.08);padding:0}
-            .guc-table{width:100%;border-collapse:separate;border-spacing:0;margin:0}
-            .guc-table thead{background:linear-gradient(180deg,#f6ede2,#ede0d1)}
-            .guc-table th{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#81684b;text-align:left;padding:14px 22px;border-bottom:1px solid #e8dccc}
-            .guc-table tbody tr{transition:background .2s ease}
-            .guc-table tbody tr:nth-child(even){background:#fcf8f3}
-            .guc-table td{padding:18px 22px;color:#3f2d20;border-bottom:1px solid #f2e9de;font-size:14px}
-            .guc-table tbody tr:last-child td{border-bottom:none}
-            .guc-badge{display:inline-flex;align-items:center;gap:6px;background:#2e7d32;color:#fff;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:600}
-            .guc-actions{display:flex;gap:10px}
-            .guc-icon{border:0;border-radius:12px;padding:10px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 10px 20px rgba(0,0,0,0.15)}
-            .guc-icon[data-act="view"]{background:#7d7d7d}
-            .guc-icon[data-act="edit"]{background:#f29f05}
-            .guc-icon[data-act="delete"]{background:#d64545}
-            .guc-empty{padding:40px;text-align:center;color:#a08667;font-weight:500}
-            #guc-mask,#guc-edit-mask{position:fixed;inset:0;background:rgba(32,24,18,0.55);display:none;align-items:center;justify-content:center;z-index:9999}
-            .guc-modal{width:min(620px,92vw);background:#fff;border-radius:24px;box-shadow:0 30px 80px rgba(32,24,18,0.35);overflow:hidden;border:1px solid #efdfcc}
-            .guc-modal__header{display:flex;justify-content:space-between;align-items:center;padding:22px 28px;background:linear-gradient(135deg,#4c3b31,#2f231c);color:#fff}
-            .guc-modal__title{font-size:20px;font-weight:800;margin:0}
-            .guc-close{background:transparent;border:0;color:#fff;font-size:22px;cursor:pointer}
-            .guc-modal__body{padding:26px 28px;background:#faf6f1}
-            .guc-field{margin-bottom:18px}
-            .guc-label{display:block;font-size:13px;font-weight:700;margin-bottom:8px;color:#4b3526;text-transform:uppercase;letter-spacing:.05em}
-            .guc-input{width:100%;padding:14px 16px;border-radius:14px;border:1px solid #e3d3c0;background:#fff4e8;color:#3f2d20;font-size:15px;transition:box-shadow .2s ease,border .2s ease}
-            .guc-input:focus{outline:none;border-color:#c89f75;box-shadow:0 0 0 4px rgba(200,159,117,0.25)}
-            .guc-input[disabled]{background:#f1ebe3;color:#9f8a71}
-            .guc-helper{font-size:12px;color:#a17f56;margin-top:6px}
-            .guc-modal__footer{display:flex;gap:12px;justify-content:flex-end;padding:20px 28px;background:#f4ebdf;border-top:1px solid #e8d9c7}
-            .guc-btn-outline{background:#fff;border:1px solid #c8a47b;color:#8a6d4c}
-            .guc-badge span{display:inline-block;font-weight:700}
-            .guc-pill-secondary{background:#fff;border:1px solid #ceb090;color:#8d7457;box-shadow:none}
-            @media (max-width:768px){
-                .guc-section__header{flex-direction:column;align-items:flex-start}
-                .guc-actions{flex-wrap:wrap}
+            .guc-wrap{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#2b2b2b}
+            .guc-wrap *{box-sizing:border-box}
+            .guc-wrap .guc-header{display:flex;align-items:center;justify-content:space-between;margin:8px 0 16px}
+            .guc-wrap .guc-title{font-weight:800;font-size:22px;margin:0}
+            .guc-wrap .guc-card{background:#fff;border:1px solid #eee;border-radius:14px;padding:10px;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+            .guc-wrap .guc-btn{border:0;border-radius:14px;padding:10px 16px;cursor:pointer;transition:.15s;box-shadow:0 2px 6px rgba(0,0,0,.08);font-weight:600}
+            .guc-wrap .guc-btn-primary{background:#bfa27b;color:#fff}
+            .guc-wrap .guc-btn-primary:disabled{opacity:.6;cursor:not-allowed}
+            .guc-wrap .guc-btn-outline{background:#fff;border:2px solid #bfa27b;color:#5a4b35}
+            .guc-wrap .guc-table{width:100%;border-collapse:separate;border-spacing:0}
+            .guc-wrap .guc-table th,.guc-wrap .guc-table td{padding:12px;border-bottom:1px solid #eee;text-align:left}
+            .guc-wrap .guc-table thead th{font-size:13px;text-transform:uppercase;letter-spacing:.6px;background:#f7f3ed}
+            .guc-wrap .guc-badge-green{background:#2e7d32;color:#fff;padding:6px 10px;border-radius:999px;font-size:12px;display:inline-block;font-weight:600}
+            .guc-wrap .guc-actions{display:flex;align-items:center}
+            .guc-wrap .guc-actions .guc-icon{border:0;background:#f5f2ec;padding:8px;border-radius:10px;margin-right:6px;cursor:pointer;transition:.15s}
+            .guc-wrap .guc-actions .guc-icon:last-child{margin-right:0}
+            .guc-wrap .guc-actions .guc-view{background:#9e9e9e;color:#fff}
+            .guc-wrap .guc-actions .guc-edit{background:#ffa000;color:#fff}
+            .guc-wrap .guc-actions .guc-del{background:#e53935;color:#fff}
+            .guc-wrap .guc-empty{padding:20px;text-align:center;color:#7d7160;font-size:14px}
+            .guc-wrap .guc-modal-mask{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999}
+            .guc-wrap .guc-modal-mask[hidden]{display:none!important}
+            .guc-wrap .guc-modal{width:min(680px,92vw);background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.2);overflow:hidden}
+            .guc-wrap .guc-modal-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid #eee;background:#4b3a31;color:#fff}
+            .guc-wrap .guc-modal-title{font-size:20px;font-weight:800;margin:0}
+            .guc-wrap .guc-close{background:transparent;border:0;font-size:20px;cursor:pointer;color:#fff}
+            .guc-wrap .guc-modal-body{padding:20px}
+            .guc-wrap .guc-field{margin-bottom:14px}
+            .guc-wrap .guc-label{display:block;font-size:13px;font-weight:700;margin-bottom:8px;color:#4b3a31}
+            .guc-wrap .guc-input{width:100%;padding:12px 12px;border-radius:10px;border:1px solid #e6e0d6;background:#fbfaf8}
+            .guc-wrap .guc-input:focus{outline:none;border-color:#bfa27b;box-shadow:0 0 0 2px rgba(191,162,123,.25)}
+            .guc-wrap .guc-input[disabled]{background:#f1f0ee;color:#8c8c8c}
+            .guc-wrap .guc-modal-footer{display:flex;gap:10px;justify-content:flex-end;padding:16px 20px;border-top:1px solid #eee}
+            .guc-wrap .guc-helper{font-size:12px;color:#9c8b74;margin-top:-6px;margin-bottom:10px}
+            @media (max-width:640px){
+                .guc-wrap .guc-header{flex-direction:column;align-items:flex-start;gap:12px}
             }
             CSS;
 
@@ -143,87 +134,58 @@ class GUC_Plugin {
         $this->maybe_create_table();
 
         ob_start(); ?>
-        <div class="guc-app">
-            <nav class="guc-nav" aria-label="Secciones del panel">
-                <button type="button" class="guc-nav__item">Resumen</button>
-                <button type="button" class="guc-nav__item guc-nav__item--active">Casos</button>
-                <button type="button" class="guc-nav__item">Usuarios</button>
-            </nav>
-
-            <section class="guc-section" aria-labelledby="guc-casos-title">
-                <div class="guc-section__header">
-                    <div>
-                        <h2 class="guc-section__title" id="guc-casos-title">Gestión de Casos</h2>
-                        <p class="guc-section__subtitle">Visualiza el estado de tus expedientes y registra acciones.</p>
-                    </div>
-                    <button type="button" class="guc-pill guc-pill-secondary">
-                        <span>＋</span> Nuevo caso
-                    </button>
-                </div>
-                <div class="guc-card">
-                    <div class="guc-empty">No hay casos registrados en este módulo.</div>
-                </div>
-            </section>
-
-            <section class="guc-section" aria-labelledby="guc-users-title">
-                <div class="guc-section__header">
-                    <div>
-                        <h2 class="guc-section__title" id="guc-users-title">Gestión de Usuarios</h2>
-                        <p class="guc-section__subtitle">Crea, edita y elimina credenciales para tu equipo de trabajo.</p>
-                    </div>
-                    <button class="guc-pill" id="guc-open-modal" type="button">
-                        <span>＋</span> Crear usuario
-                    </button>
-                </div>
-
-                <div class="guc-card">
-                    <table class="guc-table" id="guc-table">
-                        <thead>
-                            <tr>
-                                <th>Usuario</th>
-                                <th>Contraseña</th>
-                                <th>Entidad</th>
-                                <th>Expediente</th>
-                                <th>Fecha creación</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="guc-tbody"></tbody>
-                    </table>
-                    <div class="guc-empty" id="guc-empty" style="display:none">No hay usuarios registrados.</div>
-                </div>
-            </section>
+        <div class="guc-wrap">
+            <div class="guc-header">
+                <h2 class="guc-title">Gestión de Usuarios</h2>
+                <button class="guc-btn guc-btn-primary" id="guc-open-modal" type="button">Crear usuario</button>
+            </div>
+            <div class="guc-card">
+                <table class="guc-table" id="guc-table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Contraseña</th>
+                            <th>Entidad</th>
+                            <th>Expediente</th>
+                            <th>Fecha creación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="guc-tbody"></tbody>
+                </table>
+                <div class="guc-empty" id="guc-empty" hidden>No hay usuarios registrados.</div>
+            </div>
         </div>
 
         <!-- Modal: Crear -->
-        <div id="guc-mask" aria-hidden="true">
+        <div class="guc-modal-mask" id="guc-mask" hidden>
             <div class="guc-modal" role="dialog" aria-modal="true" aria-labelledby="guc-modal-title">
-                <div class="guc-modal__header">
-                    <h3 class="guc-modal__title" id="guc-modal-title">Crear nuevo usuario</h3>
+                <div class="guc-modal-header">
+                    <h3 class="guc-modal-title" id="guc-modal-title">Crear nuevo usuario</h3>
                     <button class="guc-close" id="guc-close" type="button" aria-label="Cerrar">×</button>
                 </div>
-                <div class="guc-modal__body">
+                <div class="guc-modal-body">
                     <div class="guc-field">
                         <label class="guc-label" for="guc-expediente">Nro Expediente</label>
                         <input type="text" class="guc-input" id="guc-expediente" placeholder="Ej.: TAR-2033-GL">
                         <div class="guc-helper">Se guardará exactamente como lo ingreses.</div>
                     </div>
                 </div>
-                <div class="guc-modal__footer">
-                    <button class="guc-pill guc-pill-secondary" id="guc-cancel" type="button">Cerrar</button>
-                    <button class="guc-pill" id="guc-create" type="button">Crear</button>
+                <div class="guc-modal-footer">
+                    <button class="guc-btn guc-btn-outline" id="guc-cancel" type="button">Cancelar</button>
+                    <button class="guc-btn guc-btn-primary" id="guc-create" type="button">Crear</button>
                 </div>
             </div>
         </div>
 
         <!-- Modal: Editar -->
-        <div id="guc-edit-mask" aria-hidden="true">
+        <div class="guc-modal-mask" id="guc-edit-mask" hidden>
             <div class="guc-modal" role="dialog" aria-modal="true" aria-labelledby="guc-edit-title">
-                <div class="guc-modal__header">
-                    <h3 class="guc-modal__title" id="guc-edit-title">Editar usuario</h3>
+                <div class="guc-modal-header">
+                    <h3 class="guc-modal-title" id="guc-edit-title">Editar usuario</h3>
                     <button class="guc-close" id="guc-edit-close" type="button" aria-label="Cerrar">×</button>
                 </div>
-                <div class="guc-modal__body">
+                <div class="guc-modal-body">
                     <div class="guc-field">
                         <label class="guc-label" for="guc-edit-username">Usuario</label>
                         <input type="text" class="guc-input" id="guc-edit-username" disabled>
@@ -241,9 +203,9 @@ class GUC_Plugin {
                         <input type="text" class="guc-input" id="guc-edit-expediente" placeholder="Ej.: TAR-2033-GL">
                     </div>
                 </div>
-                <div class="guc-modal__footer">
-                    <button class="guc-pill guc-pill-secondary" id="guc-edit-cancel" type="button">Cerrar</button>
-                    <button class="guc-pill" id="guc-edit-save" type="button">Guardar</button>
+                <div class="guc-modal-footer">
+                    <button class="guc-btn guc-btn-outline" id="guc-edit-cancel" type="button">Cancelar</button>
+                    <button class="guc-btn guc-btn-primary" id="guc-edit-save" type="button">Guardar</button>
                 </div>
             </div>
         </div>
