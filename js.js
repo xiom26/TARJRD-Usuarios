@@ -160,12 +160,34 @@
     }
   };
 
+  const view = {
+    open(tr){
+      const username = tr.querySelector('.guc-td-username').innerText.trim();
+      const password = tr.querySelector('.guc-td-password .guc-badge-green').innerText.trim();
+      const entity   = tr.querySelector('.guc-td-entity').innerText.trim();
+      const expediente = tr.querySelector('.guc-td-expediente').innerText.trim();
+
+      $('#guc-view-username').value   = username;
+      $('#guc-view-password').value   = password;
+      $('#guc-view-entity').value     = (entity === '-' ? '' : entity);
+      $('#guc-view-expediente').value = expediente;
+
+      $('#guc-view-mask').hidden = false;
+    },
+    close(){
+      $('#guc-view-mask').hidden = true;
+    }
+  };
+
   // ---------- Eventos ----------
   root.addEventListener('click', (e)=>{
     if(e.target.id === 'guc-open-modal'){ openModal(); }
     if(e.target.id === 'guc-close' || e.target.id === 'guc-cancel'){ closeModal(); }
     if(e.target.id === 'guc-create'){ createUser(); }
     if(e.target.closest('#guc-mask') && e.target.id === 'guc-mask'){ closeModal(); }
+
+    if(e.target.id === 'guc-view-close' || e.target.id === 'guc-view-ok'){ view.close(); }
+    if(e.target.closest('#guc-view-mask') && e.target.id === 'guc-view-mask'){ view.close(); }
 
     // modal editar
     if(e.target.id === 'guc-edit-close' || e.target.id === 'guc-edit-cancel'){
@@ -182,11 +204,7 @@
       const act = actBtn.dataset.act;
 
       if(act === 'view'){
-        const u = tr.querySelector('.guc-td-username').innerText.trim();
-        const p = tr.querySelector('.guc-td-password .guc-badge-green').innerText.trim();
-        const en = tr.querySelector('.guc-td-entity').innerText.trim();
-        const ex = tr.querySelector('.guc-td-expediente').innerText.trim();
-        alert(`Usuario: ${u}\nContraseña: ${p}\nEntidad: ${en}\nExpediente: ${ex}`);
+        view.open(tr);
       }
       if(act === 'edit'){
         edit.open(id, tr);

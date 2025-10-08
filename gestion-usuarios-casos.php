@@ -176,6 +176,37 @@ class GUC_Plugin {
                 </div>
             </div>
 
+            <!-- Modal: Ver -->
+            <div class="guc-modal-mask" id="guc-view-mask" hidden>
+                <div class="guc-modal" role="dialog" aria-modal="true" aria-labelledby="guc-view-title">
+                    <div class="guc-modal-header">
+                        <h3 class="guc-modal-title" id="guc-view-title">Ver usuario</h3>
+                        <button class="guc-close" id="guc-view-close" type="button" aria-label="Cerrar">×</button>
+                    </div>
+                    <div class="guc-modal-body">
+                        <div class="guc-field">
+                            <label class="guc-label" for="guc-view-username">Usuario</label>
+                            <input type="text" class="guc-input" id="guc-view-username" disabled>
+                        </div>
+                        <div class="guc-field">
+                            <label class="guc-label" for="guc-view-password">Contraseña</label>
+                            <input type="text" class="guc-input" id="guc-view-password" disabled>
+                        </div>
+                        <div class="guc-field">
+                            <label class="guc-label" for="guc-view-entity">Entidad</label>
+                            <input type="text" class="guc-input" id="guc-view-entity" disabled>
+                        </div>
+                        <div class="guc-field">
+                            <label class="guc-label" for="guc-view-expediente">Expediente</label>
+                            <input type="text" class="guc-input" id="guc-view-expediente" disabled>
+                        </div>
+                    </div>
+                    <div class="guc-modal-footer">
+                        <button class="guc-btn guc-btn-primary" id="guc-view-ok" type="button">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Modal: Editar -->
             <div class="guc-modal-mask" id="guc-edit-mask" hidden>
                 <div class="guc-modal" role="dialog" aria-modal="true" aria-labelledby="guc-edit-title">
